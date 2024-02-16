@@ -1,0 +1,161 @@
+# This is my minimalist sway config for the uConsole. It is based on
+# my pocketchip config, itself inspired by flewkey's original config,
+# but tweaked for terminal-oriented users: In particular; maximizing
+# limited screen space, and avoiding key conflicts with terminal
+# applications like emacs.
+
+# user variables
+set $term       foot
+set $status     ~/bin/status.sh
+set $launch     $floatterm /home/brandon/bin/sway-launcher-desktop.sh
+set $screenshot grim
+set $floatterm  exec foot --app-id=launcher
+
+# emergency exit keybinding
+bindsym Control+Escape exec swaymsg exit
+
+# load custom keyboard map. comment to disable.
+input "7855:36:ClockworkPI_uConsole_Keyboard" {
+  # xkb_file /home/brandon/.config/xkb/uconsole_dump.xkb
+}
+
+# uConsole screen defaults to portrait, rotate output to compensate.
+output DSI-1 transform 90
+
+# symlink or copy desktop background to config dir
+output * bg background fill
+
+
+# Style:
+# - don't waste a single pixel, we have none to spare.
+# - Use bright colors that stand out on PocketCHIP's washed-out display.
+# - No border for single window on a workspace
+# - When multipe windows appear on a workspace, active window is highlighted.
+# - Minmal bar configuration shows workspaces, date-time, battery, and mode.
+font pango:monospace Medium 18
+client.focused   #ffff00 #ffff00 #ffff00 #ffff00 #ffff00
+client.unfocused #000000 #000000 #000000 #000000 #000000
+smart_gaps on
+smart_borders no_gaps
+default_border pixel 1
+bar {
+  position top
+  colors {
+    statusline         #ffffff
+    background         #000000
+    focused_workspace  #000000 #ffff00 #000000
+    inactive_workspace #000000 #aaaa00 #000000
+    binding_mode       #000000 #ff0000 #000000
+  }
+  status_command while echo "$(date +'%Y-%m-%d %H:%M') $(battery.sh)%"; do sleep 5; done
+}
+
+# from: https://www.reddit.com/r/swaywm/comments/gd7976/swayidle_in_lock_script_can_i_temporarily_disable/
+for_window [class="."]           inhibit_idle fullscreen
+for_window [app_id="."]          inhibit_idle fullscreen
+
+# launcher config
+for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 80 ppt 60 ppt, border pixel 10
+
+# keep spotify on workspace 10
+for_window [class="Spotify"]     move to workspace 10
+
+
+# This is a "modal" configuration. We use sway modes to emulate a
+# "sticky" super key.
+#
+# Pressing Super_R will enter "command mode". From there, most
+# key presses will perform one action and return to the default mode.
+#
+# I also added dedicated modes for resizing windows and backlight
+# control.
+
+# The "primary" command mode.
+mode "sway" {
+  # reload sway config
+  bindsym c             mode "default" ; reload
+
+  # launchers
+  bindsym Return        mode "default" ; exec $term
+  bindsym d		mode "default" ; exec $launch
+  bindsym Shift+d       mode "default" ; exec $floatterm
+  bindsym Shift+s       mode "default" ; exec $screenshot
+  
+  # window management and navigation
+  bindsym h             mode "default" ; layout splith
+  bindsym l             mode "default" ; layout toggle
+  bindsym q             mode "default" ; kill
+  bindsym v             mode "default" ; layout splitv
+  bindsym w             mode "default" ; layout toggle tabbed
+  bindsym f             mode "default" ; fullscreen
+  bindsym F11           mode "default" ; fullscreen
+  bindsym a             mode "default" ; focus parent
+  bindsym Left          mode "default" ; focus left
+  bindsym Right         mode "default" ; focus right
+  bindsym Up            mode "default" ; focus up
+  bindsym Down          mode "default" ; focus down
+  bindsym r             mode "resize"
+
+  # workspace management
+  bindsym 1             mode "default" ; workspace number 1
+  bindsym 2             mode "default" ; workspace number 2
+  bindsym 3             mode "default" ; workspace number 3
+  bindsym 4             mode "default" ; workspace number 4
+  bindsym 5             mode "default" ; workspace number 5
+  bindsym 6             mode "default" ; workspace number 6
+  bindsym 7             mode "default" ; workspace number 7
+  bindsym 8             mode "default" ; workspace number 8
+  bindsym 9             mode "default" ; workspace number 9
+  bindsym Shift+1       mode "default" ; move workspace number 1
+  bindsym Shift+2       mode "default" ; move workspace number 2
+  bindsym Shift+3       mode "default" ; move workspace number 3
+  bindsym Shift+4       mode "default" ; move workspace number 4
+  bindsym Shift+5       mode "default" ; move workspace number 5
+  bindsym Shift+6       mode "default" ; move workspace number 6
+  bindsym Shift+7       mode "default" ; move workspace number 7
+  bindsym Shift+8       mode "default" ; move workspace number 8
+  bindsym Shift+9       mode "default" ; move workspace number 9
+  
+  # backlight
+  bindsym minus         mode "backlight" ; exec brightnessctl set 2-
+  bindsym equal         mode "backlight" ; exec brightnessctl set +2
+
+  # exit to default mode.
+  # is there a wildcard binding?
+  bindsym Escape        mode "default"
+  bindsym Super_R       mode "default"
+}
+
+mode "resize" {
+  bindsym Left         mode "resize" ; resize shrink width  10px
+  bindsym Right        mode "resize" ; resize grow   width  10px
+  bindsym Up           mode "resize" ; resize shrink height 10px
+  bindsym Down         mode "resize" ; resize grow   height 10px
+
+  # exit to default mode.
+  bindsym Return       mode "default"
+  bindsym Escape       mode "default"
+  bindsym Super_R      mode "default"
+}
+
+mode "backlight" {
+  bindsym minus        mode "backlight" ; exec brightnessctl set 2-
+  bindsym equal        mode "backlight" ; exec brightnessctl set +2
+
+  # exit to default mode.
+  bindsym Return       mode "default"
+  bindsym Escape       mode "default"
+  bindsym Super_R      mode "default"
+}
+
+bindsym Super_R       mode "sway"
+
+# Handle extended keys on the Fn layer.
+bindsym XF86MonBrightnessDown exec brightnessctl set 1-
+bindsym XF86MonBrightnessUp   exec brightnessctl set +1
+bindsym Print                 exec $screenshot
+
+# start terminal at launch
+exec $term
+
+include /etc/sway/config.d/*
