@@ -19,10 +19,11 @@ compatible with `i3`.
 
 ### Custom Scripts
 
-| File          | Function                                  |
-|---------------|-------------------------------------------|
-| `bin/font.sh` | choose a linux console font interactively |
-| `battery.sh`  | outputs current battery status            |
+| File          | Function                                   |
+|---------------|--------------------------------------------|
+| `bin/font.sh` | choose a linux console font interactively  |
+| `battery.sh`  | outputs current battery status             |
+| `gamepad.py`  | translates gamepad inputs into key presses |
 
 ### Sway Config
 
@@ -33,6 +34,7 @@ compatible with `i3`.
     multiple on the current workspace.
 - Configures `swaybar` with workspace switcher, clock, and battery status.
 - Brightness control keys work
+- Starts helper script to convert gamepad input to key presses.
   
 #### Key Bindings
 
@@ -42,6 +44,10 @@ the `Super` key, and *then* type the corresponding action key.
 For example, to open a terminal, type `Super_R` (`Fn` + `Alt_L`)
 *followed by* `Enter`. If you are already used to the default key
 bindings, this should be an easy adjustment.
+
+Gamepad inputs are converted to keyboard inputs via `gamepad.py` in
+the bin directory. You can change the key bindings by editing KEYMAP
+table in this script.
 
 #### Cheat Sheet
 
