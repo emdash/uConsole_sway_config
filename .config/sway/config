@@ -155,6 +155,10 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 1-
 bindsym XF86MonBrightnessUp   exec brightnessctl set +1
 bindsym Print                 exec $screenshot
 
+# Convert gamepad inputs to keyboard keys. Comment the following line
+# if you don't want this behavior.
+exec ~/bin/gamepad.py
+
 # start terminal at launch
 exec $term
 

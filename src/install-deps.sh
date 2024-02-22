@@ -21,6 +21,9 @@ PKGS+=(ttf-ancient-fonts)
 PKGS+=(grim)
 PKGS+=(bat)
 PKGS+=(delta)
+PKGS+=(wtype)
+PKGS+=(input-utils)
+PKGS+=(python3-pexpect)
 
 # Recommended packages -- adjust to your preferences.
 PKGS+=(emacs-nox)
